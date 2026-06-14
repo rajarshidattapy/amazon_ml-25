@@ -44,6 +44,8 @@ dataset/
 *.csv
 *.npy
 *.pkl
+!artifacts/model.pkl
+!artifacts/preprocessor.pkl
 *.h5
 *.model
 *.pt
