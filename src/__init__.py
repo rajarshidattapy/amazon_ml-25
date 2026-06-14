@@ -1,5 +1,9 @@
 """ML pipeline package for product price prediction."""
 
+from .console import configure_utf8_output
+
+configure_utf8_output()
+
 from .utils import smape, calculate_regression_metrics
 from .preprocessing import RobustProductDataPreprocessor
 from .features import ImageFeatureExtractor, combine_text_and_image_features

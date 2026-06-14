@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.exceptions import NotFittedError
 
 warnings.filterwarnings('ignore')
 
@@ -167,8 +168,24 @@ class RobustProductDataPreprocessor:
                 max_df=0.9,
                 dtype=np.float32
             )
-            tfidf_matrix = self.tfidf_vectorizer.fit_transform(df['combined_text'])
+            try:
+                tfidf_matrix = self.tfidf_vectorizer.fit_transform(df['combined_text'])
+            except ValueError as exc:
+                if "After pruning, no terms remain" not in str(exc):
+                    raise
+
+                self.tfidf_vectorizer = TfidfVectorizer(
+                    max_features=self.max_tfidf_features,
+                    stop_words='english',
+                    ngram_range=(1, 1),
+                    min_df=1,
+                    max_df=1.0,
+                    dtype=np.float32
+                )
+                tfidf_matrix = self.tfidf_vectorizer.fit_transform(df['combined_text'])
         else:
+            if self.tfidf_vectorizer is None:
+                raise NotFittedError("TF-IDF vectorizer has not been fitted. Run preprocessing with is_training=True first.")
             tfidf_matrix = self.tfidf_vectorizer.transform(df['combined_text'])
 
         return tfidf_matrix

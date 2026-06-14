@@ -39,7 +39,6 @@ venv.bak/
 .DS_Store
 
 # Data and Models
-artifacts/
 preprocessed_data/
 dataset/
 *.csv
